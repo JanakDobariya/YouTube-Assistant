@@ -1,9 +1,8 @@
 streamlit
-python-dotenv
-groq
+youtube-transcript-api
 langchain
-langchain-community
 langchain-huggingface
-sentence-transformers
+langchain-community
 faiss-cpu
-youtube-transcript-api==0.6.1
+transformers
+groq
