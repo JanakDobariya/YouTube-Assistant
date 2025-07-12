@@ -9,10 +9,10 @@ from langchain_core.runnables import RunnableParallel, RunnablePassthrough, Runn
 from langchain_core.output_parsers import StrOutputParser
 from groq import Groq
 import re
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
 # --- Environment & Groq Setup ---
-load_dotenv()
+# load_dotenv()
 groq_api_key = os.getenv("GROQ_API_KEY")
 if not groq_api_key:
     st.error("GROQ_API_KEY not set. Please add it to your .env file.")
