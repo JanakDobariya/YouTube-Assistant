@@ -13,7 +13,7 @@ import re
 
 # --- Environment & Groq Setup ---
 # load_dotenv()
-groq_api_key = os.getenv("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")
+groq_api_key = os.getenv("GROQ_API_KEY")
 if not groq_api_key:
     st.error("GROQ_API_KEY not set. Please add it to your .env file.")
     st.stop()
