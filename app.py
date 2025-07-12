@@ -20,16 +20,19 @@ if not groq_api_key:
 groq_client = Groq(api_key=groq_api_key)
 
 def groq_invoke(messages, model="llama3-70b-8192"):
-# def groq_invoke(messages, model="gemma2-9b-it"):
     formatted_messages = []
     for i, m in enumerate(messages):
         role = "user" if i % 2 == 0 else "assistant"
         formatted_messages.append({"role": role, "content": m})
-    completion = groq_client.chat.completions.create(
-        model=model,
-        messages=formatted_messages
-    )
-    return completion.choices[0].message.content
+    try:
+        completion = groq_client.chat.completions.create(
+            model=model,
+            messages=formatted_messages
+        )
+        return completion.choices[0].message.content
+    except Exception as e:
+        st.error(f"GROQ API Error: {e}")
+        return "An error occurred with the LLM API."
 
 def extract_video_id(url_or_id):
     patterns = [
