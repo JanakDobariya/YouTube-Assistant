@@ -13,14 +13,14 @@ import re
 
 # --- Environment & Groq Setup ---
 # load_dotenv()
-groq_api_key = os.getenv("GROQ_API_KEY")
+groq_api_key = os.getenv("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")
 if not groq_api_key:
     st.error("GROQ_API_KEY not set. Please add it to your .env file.")
     st.stop()
 groq_client = Groq(api_key=groq_api_key)
 
-# def groq_invoke(messages, model="llama3-70b-8192"):
-def groq_invoke(messages, model="gemma2-9b-it"):
+def groq_invoke(messages, model="llama3-70b-8192"):
+# def groq_invoke(messages, model="gemma2-9b-it"):
     formatted_messages = []
     for i, m in enumerate(messages):
         role = "user" if i % 2 == 0 else "assistant"
