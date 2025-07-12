@@ -9,13 +9,11 @@ from langchain_core.runnables import RunnableParallel, RunnablePassthrough, Runn
 from langchain_core.output_parsers import StrOutputParser
 from groq import Groq
 import re
-# from dotenv import load_dotenv
 
 # --- Environment & Groq Setup ---
-# load_dotenv()
 groq_api_key = os.getenv("GROQ_API_KEY")
 if not groq_api_key:
-    st.error("GROQ_API_KEY not set. Please add it to your .env file.")
+    st.error("GROQ_API_KEY not set. Please add it to your .env file or Streamlit secrets.")
     st.stop()
 groq_client = Groq(api_key=groq_api_key)
 
@@ -45,6 +43,31 @@ def extract_video_id(url_or_id):
         if match:
             return match.group(1)
     return None
+
+# --- Helper for Chunked Summarization ---
+def split_text(text, max_words=500):
+    """Split transcript into chunks with max_words each."""
+    words = text.split()
+    return [' '.join(words[i:i+max_words]) for i in range(0, len(words), max_words)]
+
+def summarize_transcript(transcript):
+    """Summarize transcript in chunks, then merge summaries."""
+    chunks = split_text(transcript, max_words=500)
+    chunk_summaries = []
+    for i, chunk in enumerate(chunks):
+        chunk_prompt = (
+            f"You are a helpful assistant. Summarize this YouTube video transcript chunk in 2-4 sentences.\n\nTranscript:\n{chunk}\n\nSummary:"
+        )
+        summary = groq_invoke([chunk_prompt])
+        chunk_summaries.append(summary)
+    # Summarize the chunk summaries
+    final_prompt = (
+        "You are a helpful assistant. Summarize the following chunk summaries into a single concise summary (100-200 words):\n\n"
+        + '\n\n'.join(chunk_summaries)
+        + "\n\nFinal Summary:"
+    )
+    final_summary = groq_invoke([final_prompt])
+    return final_summary
 
 # --- Streamlit UI ---
 st.set_page_config(page_title="YouTube Assistant", layout="centered")
@@ -88,12 +111,7 @@ if st.button("▶️ Process"):
     elif option == "Summarization":
         st.header("📝 Summarization")
         with st.spinner("Summarizing..."):
-            summary_prompt = (
-                "You are a helpful assistant. Summarize the following YouTube video transcript into a concise summary (100-200 words).\n\n"
-                f"Transcript:\n{transcript}\n\nSummary:"
-            )
-            # Use groq_invoke
-            summary = groq_invoke([summary_prompt])
+            summary = summarize_transcript(transcript)
             st.success("✅ Summary:")
             st.markdown(summary)
 
