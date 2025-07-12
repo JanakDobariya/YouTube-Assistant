@@ -19,7 +19,8 @@ if not groq_api_key:
     st.stop()
 groq_client = Groq(api_key=groq_api_key)
 
-def groq_invoke(messages, model="llama3-70b-8192"):
+# def groq_invoke(messages, model="llama3-70b-8192"):
+def groq_invoke(messages, model="gemma2-9b-it"):
     formatted_messages = []
     for i, m in enumerate(messages):
         role = "user" if i % 2 == 0 else "assistant"
